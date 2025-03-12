@@ -1,0 +1,904 @@
+---
+title: "The Legacy of Civil War: Landmines, ERWs, and Their Effects on Cambodian Communities"
+author: "Chua Yee Huan"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  word_document:
+    highlight: breezedark
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(fig.height = 6, fig.width = 8.5)
+```
+ 
+```{r echo=FALSE}
+# install.packages('tinytex')
+# install.packages('tidyverse')
+# install.packages('ggrepel')
+# install.packages('httr')
+# install.packages('jsonlite')
+# install.packages('stats')
+# install.packages('pacman')
+# install.packages('rnaturalearth')
+# install.packages('rnaturalearthdata')
+# install.packages('sf')
+# install.packages('ggthemes')
+# install.packages('ggmap')
+# install.packages('dplyr')
+# install.packages('gridExtra')
+# install.packages('forcats')
+
+
+library(tinytex) # To use LaTeX syntax
+library(tidyverse)
+library(ggrepel) # For nice positioning of the label aesthetic
+library(httr) # To implement a GET() call for an API 
+library(jsonlite) # For parsing a json file into text
+library(stats) # For implementing logistic regression via glm()
+library(pacman) # Load pacman package
+library(rnaturalearth) # Load rnaturalearth package
+library(rnaturalearthdata) # Load rnaturalearthdata package
+library(sf) # To read and plot simple features dataframe
+library(ggthemes) # For standard themes
+library(ggmap) # Allows plotting of Google maps
+library(dplyr)
+library(gridExtra) # For stitching plots together using grid.arrange()
+library(forcats) # Helps to reorder categorical variables
+
+
+setwd("/Users/joeychua/Desktop/SUSS/Y1S1/ANL501 - Data Visualisation & Storytelling/ECAPROJ") # where ur knitted output will be
+
+# Google Maps Platform API_Key
+register_google(key = "AIzaSyAqaV9tLWSuhuWiIDhUJH1_1FdXkPe6LtI")
+```
+
+---
+
+## 1. Executive Summary
+
+This study looks at how communities all around Cambodia are still affected by landmines and explosive remnants of war (ERWs). Decades after the nation's civil war ended, landmines and ERWs still endanger public safety, especially in rural areas where agriculture is a primary livelihood. To shed light on the geographical distribution, trends in casualties, and severity of incidents pertaining to these devices, this investigation makes use of data visualization approaches. 
+
+
+#### Key Findings:
+
+- **Impact of Device**: A direct comparison between landmines and ERWs revealed that the latter typically result in a greater number of victims per occurrence. This implies that even with the success of landmine removal operations, ERWs continue to pose as a substantial threat to the Cambodian communities. 
+
+- **Casualty Trends**: The data indicates that victims are still at risk, especially in areas like rice fields, foraging zones, and built-up urban areas, despite the fact that the number of casualties dropped gradually between 2005 and 2013. These areas indicates a high number of amputations, fatalities and injuries, which is quite worrying. 
+
+- **Land Use and Casualty Type**: The examination of different casualty categories according to landuse indicates that incidents primarily take place in residential and agricultural regions, putting civilians, particularly farmers and rural residents at greater danger. 
+
+- **Geographical Distribution**: Provinces like Battambang, Banteay Meanchey and Pailin had the largest number of landmine and ERW incidences, indicating local hotspots that need targeted demining efforts. 
+
+
+#### Implications:
+
+In order to reduce the risk posed by these war remnants, this study emphasizes the need for ongoing funding for demining operations and community education initiatives. Policymakers, international organizations and non-governmental organizations (NGOs) engaged in landmine clearance and restoration initiatives might utilise the findings as practical insights. 
+
+
+#### Recommendations:
+
+- **Targeted Demining**: To lower the number of incidents caused by mine and ERWs, Cambodia should concentrate demining resources in high-risk provinces which are more vulnerable, such as Battambang, Banteay Meanchey and Pailin.
+
+- **Provide Support for Victims**: Expand access to medical treatment and rehabilitation programs for survivors, with a focus on amputees' needs. 
+
+- **Technological Support**: To expedite the pressing issue to clear impacted regions and bring down casualties number, Cambodia should invest in cutting-edge demining technology and inventions. This is made possible due to the rapid advancement of technology in this day and age. 
+
+These proposals seek to resolve the legacy of landmines and ERWs in Cambodia and guarantee safer settings for future generations by concentrating on areas and communities most impacted. 
+
+
+
+## 2. Introduction
+
+The Cambodian civil war, which spanned from 1960s to 1970s, had a significant and long-lasting effect on the nation. The millions of landmines and explosive remnants of war (ERWs) that are scattered across Cambodia are among the most enduring consequences. Long after the fighting has ended, these concealed threats still significantly jeopardize the security, lifelihood, and progress of Cambodian communities. 
+
+A lingering legacy of battle, landmines and ERWs inflict harm, fatalities and psychological anguish on its people. These explosives impede access to land, infrastructure, basic social services, irrigation, and safe drinking water for consumption. Victims are often left crippled, undergo amputation and receive minimal assistance in obtaining job, training, education, and mental and physical health care while they are incapacitated. Victims are typically women, landless, and illiterate. Even while demining efforts have advanced significantly, there are still many obstacles to overcome. Till date, there are still a large number of explosives that remains uncleared.  
+
+This report highlights the findings pertaining to landmines and ERWs in Cambodia, as well as the psychological repercussions of these explosives on Cambodian communities. 
+
+The 2 datasets that are primarily used to work on this report are:
+
+- **'mine.shp'**: Contains information on landmine incidents (victim, injure, amputation, killed) that occurred between 2005 and 2013. It also includes information on the type of device that caused the explosion, the incident's coordinates, date of incident, and other location-related details such as the names of the communes, districts and provinces .
+
+- **'fear.shp'**: Contains surveys on people's fears about explosives from 2009 through 2014. The dataset includes locational attributes like the names of the provinces, districts, communes, as well as information about the date of the survey was conducted, the locations of contamination sites, the respondents' fear levels, their proximity to the contamination sites, and landmine's class types in which the contamination sites are located. 
+
+The source of the respective datasets can be found in  [here](https://data.opendevelopmentcambodia.net/dataset/mineerw-casualties-2005--2013) and [here](https://data.opendevelopmentcambodia.net/dataset/erw).
+
+Our analysis reveals that communities located close to minefields or historical battle zones typically have greater levels of fear. Additionally, there is a strong positive correlation between the number of injuries and fatalities in explosive incidents. Areas with more injuries tend to have higher fatalities count, and the degree of amputation adds even another stress aspect. It implies that explosives inflict long-lasting physical and psychological harm on impacted communities in addition to posing an immediate risk. 
+
+
+
+## 3. Data
+
+The datasets used for this research was collected from Open Development Cambodia (ODC). Mine dataset spans the years 2005 to 2013, while fear dataset spans the years 2009 to 2014. It includes information from across multiple provinces across Cambodia, providing insights into the casualties count, the type of devices which caused the explosions, incident dates, the psychological impact on Cambodian communities, landmine's class types and their proximity to the contamination sites. The primary goal of the data is to examine the situation regarding landmines and ERWs in Cambodia. 
+
+
+#### Key Variables:
+
+- **Landuse**: A categorical variable representing the type of land usage.
+
+- **ERW_TYPE**: A categorical variable representing the type of ERW which caused the explosion.
+
+- **MINE_TYPE**: A categorical variable representing the type of MINE which caused the explosion.
+
+- **Fear_Level**: A categorical variable representing the respondent's fear level on these explosion.
+
+- **Proximity**: A categorical variable representing the respondent's proximity to the contamination sites.
+
+
+#### General Issues
+
+During data pre-processing stage, it was observed that there were a total of 61 empty values under the column, ERW_TYPE, which we will replace these with "Unknown". In addition, province names of Cambodia were either spelled incorrectly or requires fixing of spaces, so we standardized these names across both datasets. Lastly, it was noted that there was quite a large number of respondents who had left their fear level as blank in their survey responses, which we will replace these blank fields with "Unknown". 
+
+
+#### General Observations
+
+- Preliminary analysis showed that ERWs cause higher number of victims as compared to mines. Based on the trendlines plotted from 2005 to 2013, the number of victims who suffered from ERW-related casualties or mine-related casualties indicate a steady decline in incidents over the years, probably due to demining activities and increased public awareness. Nonetheless, the fact that victims continue to appear annually, particularly between 2011 and 2013, indicates that mines and ERWs continue to pose as a dangerous threat, particularly in regions with challenging terrain or little access to demining resources. 
+
+
+
+## 4. Main Discussions
+
+
+### 4.1 Exploratory Data Analysis
+
+The two datasets are both in shape files, so in order to import and read both files, I will use the sf library, i.e. install.packages("sf") and use read_sf to parse the shape files into a sf data frame. I will store my datasets as mine.df and fear.df.
+
+
+```{r import data, echo = TRUE}
+# Importing raw data files
+
+mine.df <- sf::read_sf(dsn = "./fear/mine.shp")
+
+fear.df <- sf::read_sf(dsn = "./mine/khm_blscontaminationp_gov_cmaa.shp")
+```
+
+
+After my datasets have been imported successfully, I will move on to perform data analysis, data management, check for any missing values, and consider how I want to handle these missing values separately for both of my datasets - mine and fear. 
+
+It is noted that in the last column of the dataset, the geometry variable given to us is not in the latitude-longitude coordinate system, so we will have to convert it using st_transform before we are able to read the sf data frame in geom_sf.  
+
+
+```{r mine_data_preprocessing, echo = TRUE, include=FALSE}
+# Data Analysis
+str(mine.df) # Shows the number of observations(rows) and variables (columns) in mine dataframe
+head(mine.df) # Shows the first 6 rows of the data
+tail(mine.df) # Shows the bottom 6 rows of the data
+summary(mine.df) # Indicates some descriptive statistics of mine dataframe
+
+# Data Management
+is.data.frame(mine.df) # To check if mine.df is a dataframe
+colnames(mine.df)
+
+# Checking for any NA values for mine.df Dataset
+is.na(mine.df) # to check if there is any missing values
+colSums(is.na(mine.df)) # count the no of missing values F=0; T=1
+
+blank_ERW_TYPE <- mine.df %>%
+  filter(DEVICES == "ERW") %>% # Filter rows where DEVICES is "ERW"
+  filter(is.na(ERW_TYPE)) # Further filter to extract rows where ERW_TYPE is NA
+
+blank_MINE_TYPE <- mine.df %>%
+  filter(DEVICES == "Mine") %>% # Filter rows where DEVICES is "Mine"
+  filter(is.na(MINE_TYPE)) # Further filter to extract rows where MINE_TYPE is NA
+
+mine.df$ERW_TYPE %>% unique()
+mine.df$MINE_TYPE %>% unique()
+
+updated.mine.df <- mine.df %>%
+  mutate(ERW_TYPE = if_else(DEVICES == "ERW" & is.na(ERW_TYPE), "Unknown", ERW_TYPE))
+
+# Converting geometry variable into the lat-long coordinate system using st_transform
+updated.mine.df$geometry <- st_transform(updated.mine.df$geometry, crs = 4326)
+# print(updated.mine.df)
+
+coordinates.mine.df <- st_coordinates(updated.mine.df$geometry) # Extract coordinates
+coordinates.mine.df <- as.data.frame(coordinates.mine.df) # Convert coordinates.mine.df into dataframe
+colnames(coordinates.mine.df) <- c("Longitude", "Latitude") # Rename the columns of the extracted data
+
+new.mine.df <- cbind(updated.mine.df, coordinates.mine.df) # Merge coordinates back into original mine.df dataset
+```
+
+
+Likewise, I will repeat similar steps for my fear dataset. Noticed that for village code in the fear dataset, it is originally "chr", so I will convert it into "num" instead, using as.numeric(). 
+
+
+```{r fear_data_preprocessing, echo = FALSE, include=FALSE}
+# Data Analysis
+str(fear.df) # Shows the number of observations(rows) and variables (columns) in fear dataframe
+head(fear.df) # Shows the first 6 rows of the data
+tail(fear.df) # Shows the bottom 6 rows of the data
+summary(fear.df) # Indicates some descriptive statistics of fear dataframe
+
+# Data Management
+is.data.frame(fear.df) # To check if fear.df is a dataframe
+colnames(fear.df)
+options(scipen = 999) # Set options to display numbers without scientific notation
+fear.df$VilCode <- as.numeric(fear.df$VilCode) # Converting fear.df dataset VilCode from "chr" to "num"
+str(fear.df)
+
+# Checking for any NA values for fear.df Dataset
+is.na(fear.df) # to check if there is any missing values
+colSums(is.na(fear.df)) # count the no of missing values F=0; T=1
+
+fear.df$Fear_Level %>% unique()
+
+updated.fear.df <- fear.df %>%
+  mutate(Fear_Level = if_else(Fear_Level == "(blank)", "Unknown", Fear_Level))
+
+# Converting geometry variable into the lat-long coordinate system using st_transform
+updated.fear.df$geometry <- st_transform(updated.fear.df$geometry, crs = 4326)
+# print(updated.fear.df)
+
+coordinates.fear.df <- st_coordinates(updated.fear.df$geometry) # Extract coordinates
+coordinates.fear.df <- as.data.frame(coordinates.fear.df) # Convert coordinates.fear.df into dataframe
+colnames(coordinates.fear.df) <- c("Longitude", "Latitude") # Rename the columns of the extracted data
+
+new.fear.df <- cbind(updated.fear.df, coordinates.fear.df) # Merge coordinates back into original fear.df dataset
+```
+
+
+Next, I will do some data cleaning to both my mine and fear datasets, before I can start to conduct my data visualization to draw insights for my research. Noticed that from the original datasets given, province names slightly differ from across both datasets. One of the dataset has all the province names capitalized while the other is not. In addition, some contains spelling errors or have to fix spacing issues. I will rectify these issues in my data cleaning step. I will convert all the province names in both datasets into lowercase characters and remove any leading/trailing spaces between characters before correcting the names to standardize across both datasets. 
+
+
+```{r data_cleaning, echo=FALSE, eval=TRUE}
+new.mine.df$Province %>% unique() # See what are the original province name in my mine and fear datasets
+new.fear.df$Province %>% unique()
+
+# Standardizing province names in both mine and fear datasets
+new.mine.df$Province <- tolower(trimws(new.mine.df$Province)) # Convert everything into lowercase and remove any leading/trailing spaces between characters
+new.fear.df$Province <- tolower(trimws(new.fear.df$Province))
+
+# Creating named vector with correct spellings for Cambodia's province names
+province_names_corrections <- c(
+  "mondol kiri" = "mondulkiri",               # Correct to "mondulkiri"
+  "mondul kiri" = "mondulkiri",               # Correct to "mondulkiri"
+  "kampong cham" = "kampong cham",            # Already correct
+  "banteay mean chey" = "banteay meanchey",   # Fix spacing
+  "otdar mean chey" = "oddar meanchey",       # Correct to "oddar meanchey"
+  "siem reap" = "siem reap",                  # Already correct
+  "siemreap" = "siem reap",                  # Fix to "siem reap"
+  "preah vihear" = "preah vihear",            # Already correct
+  "pursat" = "pursat",                       # Already correct
+  "battambang" = "battambang",               # Already correct
+  "krong pailin" = "pailin",                 # Correct to "pailin"
+  "kaoh kong" = "koh kong",                  # Correct to "koh kong"
+  "kampot" = "kampot",                       # Already correct
+  "kampong speu" = "kampong speu",           # Already correct
+  "kandal" = "kandal",                       # Already correct
+  "kracheh" = "kratie",                      # Correct to "kratie"
+  "kampong thom" = "kampong thom",           # Already correct
+  "kampong chhnang" = "kampong chhnang",     # Already correct
+  "stueng traeng" = "stung treng",           # Correct to "stung treng"
+  "svay rieng" = "svay rieng",               # Already correct
+  "takaev" = "takeo",                        # Correct to "takeo"
+  "prey veaeng" = "prey veng",               # Correct to "prey veng"
+  "phnom penh" = "phnom penh",               # Already correct
+  "rotanak kiri" = "ratanakiri",             # Correct to "ratanakiri"
+  "ratanak kiri" = "ratanakiri",             # Correct to "ratanakiri"
+  "krong preah sihanouk" = "preah sihanouk", # Correct to "preah sihanouk"
+  "sihanoukville" = "preah sihanouk"         # Correct to "preah sihanouk"
+)
+
+# Using recode() to replace incorrect names with correct province names based on previous mapping
+new.mine.df$Province <- recode(new.mine.df$Province, !!!province_names_corrections)
+new.fear.df$Province <- recode(new.fear.df$Province, !!!province_names_corrections)
+
+# Check the unique province names in each dataset after doing name correction
+unique(new.mine.df$Province)
+unique(new.fear.df$Province)
+
+# Find common province names between both datasets
+common_provinces <- intersect(unique(new.mine.df$Province), unique(new.fear.df$Province))
+common_provinces
+```
+
+
+### 4.2 Data Visualization Analysis Insights
+
+This section contains visual insights drawn from both mine and fear datasets. It allows stakeholders to come to a conclusion more intuitively, since visuals help to condense large amount of data into bite-sized information.  
+
+
+#### 4.2.1 Cambodia Map Overview
+
+The image below shows an overview of Cambodia map plotted using its geographic coordinates, which is fetched from get_googlemap. To be able to retrieve this map, I have obtained my Google API key prior to this. This map functions as a broad geographic reference, to tell us which are the neighboring countries of Cambodia, based on its longitude and latitude. 
+
+
+```{r cambodia_map, echo = FALSE}
+cambodia <- ggmap::geocode("Cambodia") # Obtaining Cambodia's location
+cambodia
+
+cambodia.map <- get_googlemap(center = c(lon = cambodia$lon, lat = cambodia$lat), zoom = 6)
+ggmap(cambodia.map) + # cambodia.map is the base map that is fetched from get_googlemap()
+  ggtitle("Cambodia Map Overview") + 
+  theme(plot.title = element_text(size = 16, face = "bold"))
+
+
+cam.map <-
+  ne_countries(scale = 'medium',
+               type = "countries", 
+               country = "Cambodia",
+               returnclass = "sf")
+
+# print(cam.map)
+```
+
+
+#### 4.2.2 Cambodia Incident Map Overtime
+
+With the help of a color-coded legend at the bottom, this map shows the spatial distribution of incidences associated with explosive ordnance - mines and ERWs spanning across several years throughout Cambodia. To be able to plot this, I will first extract out the Year information and pass it into a new column, 'Year'. 
+
+```{r cambodia_incident_map, echo = FALSE}
+# Spatial Plot Distribution of Incidents Overtime from cam.map
+new.mine.df$Incident_D <- as.Date(new.mine.df$Incident_D) # Change data type for Incident_D into date type
+new.mine.df$Year <- format(new.mine.df$Incident_D, "%Y") # Extract Year as character
+
+ggplot() + 
+  geom_sf(data = cam.map) + # Plot the base map
+  geom_sf(data = new.mine.df, 
+          aes(color = Year),# Using "Year" variable for plotting
+          alpha = 0.6) + # Overlaying incident data and sets the transparency level for my incident points
+  scale_color_viridis_d(option = "plasma", direction = -1, name = "Incident Year") + # Use discrete color scale since my "Year" is categorical. Direction = -1 ensures that my colors are arranged in reverse order
+  labs(title = "Incident Map", subtitle = "Spatial Distribution of Incidents Overtime") + # Adding main title and subtitle for my plot
+  guides(fill = guide_legend(nrow = 1)) + # Adjust the fill legend
+  theme_map() +
+  theme(plot.title = element_text(size = 16, face = "bold"), # Sets the size and style of my title
+        plot.subtitle = element_text(size = 12, face = "italic"), # Sets the size and style of my subtitle
+        legend.position = "bottom", 
+        legend.justification = "center", # Sets the position of my legend
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 10), # Sets the size of my legend title and text
+        panel.background = element_blank()) # customize legend position
+```
+
+As indicated in the legend, the dots represent separate incidents when the incident occurred, with color corresponding to the different years in which it happened. There seems to be a high concentration of incidents in several locations of Cambodia, especially so in the Northwest.
+
+
+#### 4.2.3 Provinces of Cambodia Map Overview
+
+The provinces of Cambodia are displayed on this map, with each one designated with a blue point that indicates its unique location based on latitude and longitude. These labeling of Cambodia's provinces enables readers to recognize particular areas on the map. 
+
+
+```{r cambodia_provinces, echo = FALSE}
+# Provinces of Cambodia Map Overview
+unique_provinces_df <- new.mine.df %>%
+  distinct(Province, .keep_all = TRUE)
+
+cambodia_map_terrain <- get_googlemap(center = c(lon = cambodia$lon, lat = cambodia$lat), zoom = 7, maptype = "terrain")
+
+ggmap(cambodia_map_terrain) +
+  geom_point(aes(x = Longitude, y = Latitude), 
+             data = unique_provinces_df, 
+             color = "blue", size =3, alpha = 0.6) +  # Add transparency with alpha
+  geom_text(aes(x = Longitude, y = Latitude, label = Province), data = unique_provinces_df, 
+            hjust = 0.5, vjust = -1, size = 5, check_overlap = TRUE) +  # Reduce label size and avoid overlap
+  ggtitle("Provinces of Cambodia with Longitude and Latitude") +
+  theme(plot.title = element_text(size = 12, face = "bold"))
+```
+
+
+#### 4.2.4 Type of device that caused the explosion in Cambodia
+
+It shows the spatial distribution of the type of devices, whether is it caused by landmines or ERWs which resulted in an explosion in Cambodia. 
+
+
+```{r cambodia_device_type, echo = FALSE}
+# Type of Devices that Caused Explosions in Cambodia
+mine.df.province <- new.mine.df %>%
+  group_by(Province) %>%
+  summarise(Longitude = mean(Longitude), Latitude = mean(Latitude))
+
+new.mine.df$devcolour <- ifelse(new.mine.df$DEVICES == "Mine", "Mine", "ERW")
+
+ggmap(cambodia_map_terrain) +
+  geom_point(data = new.mine.df, 
+             mapping = aes(x = Longitude, y = Latitude, color = devcolour), 
+             size = 3, alpha = 0.5) +
+  geom_text_repel(data = mine.df.province, 
+                  mapping = aes(x = Longitude, y = Latitude, label = Province),
+                  colour = "darkblue", size = 3) +
+  labs(title = "Type of Devices that Caused Explosion",
+       x = "lon",
+       y = "lat",
+       color = "DEVICES") + 
+  scale_color_manual(values = c("ERW" = "orange", "Mine" = "pink")) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 5, margin = margin(r = 3)),
+        plot.title = element_text(size = 11, face = "bold", hjust = 0.5))
+```
+
+
+The Northwest of Cambodia, including the provinces of Battambang, Pailin, Banteay Meanchey and Oddar Meanchey exhibit a discernible cluster of incidents. There are a lot of incidents on mines and ERWs that happened in these areas. Other than those provinces mentioned, there are also quite a number of incidents that occurred in other regions such as Kampong Thom and Siem Reap. It suggests that there seems to be more cases of explosions caused by ERWs as compared to mines, since the number of orange dots stands out more. 
+
+
+#### 4.2.5 Bar Plot to show Incident Count by Province
+
+This bar plot illustrates the total number of incidents each province experience ERW and landmine incidents in the different provinces of Cambodia. I intentionally rearranged the incident count from the largest number to the lowest, for better visibility on the province that encounters the most number of incident counts.
+
+
+```{r cambodia_province_incident_count, echo = FALSE}
+# Bar Plot to show Incident Count by Province
+incident_count_by_province <- new.mine.df %>%
+  group_by(Province) %>%
+  summarise(incident_count = n())
+
+incident_count_rearranged <- incident_count_by_province %>% # Rearrange incident count from highest to lowest count
+  arrange(desc(incident_count))
+
+ggplot(incident_count_rearranged, mapping = aes(x = reorder(Province, -incident_count), y = incident_count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Cambodia Incident Count by Province",
+       x = "Province",
+       y = "Incident Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
+```
+
+
+This bar plot is ranked from the highest number to the lowest number of incident count. It is observed that Battambang has the highest incident count, followed by Banteay Meanchey and Pailin. It means that these 3 provinces experience the greatest hit from these explosives. 
+
+
+#### 4.2.6 Bar Plot to show Distribution of Different Landmine Class
+
+This bar plot shows the frequency of different landmine classes found in Cambodia. The x-axis shows a unique landmine class, whereas the y-axis shows the number of occurrences for each particular landmine class.  
+
+
+```{r cambodia_landmine_class, echo = FALSE}
+# Bar Plot to show the Distribution of Different Landmine Class
+ggplot(new.fear.df, mapping = aes(x = Land_Class)) +
+  geom_bar(fill = "brown", color = "black", alpha = 0.5) +
+  labs(x = "Landmine Class", 
+       y = "Frequency", 
+       title = "Distribution of Different Landmine Class") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(hjust = 0.5),
+        plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
+```
+
+
+It is noted that this particular landmine class, A4, is the most prevalent since it has the highest frequency (tallest bar).  It might suggest that, in comparison to other classes of landmines, this one was planted or found more frequently. 
+
+This could help focus demining efforts in places where specific classes are more common, particularly if some landmine kinds are more harmful or challenging to remove. 
+
+
+#### 4.2.7 Heatmap with Facets
+
+This heatmap matrix illustrates the correlation between 3 variables - proximity to danger, fear level and various landmine classes.  It is divided into sections based on proximity to a potentially dangerous landmine area (very near, near, far, very far and unknown), land class (A1, A2, B4, etc) and fear level (none, low, medium, high and unknown). 
+
+
+```{r cambodia_heatmap_with_facets, echo = FALSE}
+# Heatmap with Facets:
+heatmap_fear_landclass_proximity <- new.fear.df %>%
+  group_by(Land_Class, Fear_Level, Proximity) %>%
+  summarise(Count = n()) %>%  # Count occurrences for each combination
+  ungroup()
+
+# unique(heatmap_fear_landclass_proximity$Proximity)
+
+heatmap_fear_landclass_proximity$Proximity <- ifelse(heatmap_fear_landclass_proximity$Proximity == "(blank)", "Unknown", heatmap_fear_landclass_proximity$Proximity)
+# class(heatmap_fear_landclass_proximity$Proximity)
+
+heatmap_fear_landclass_proximity$Proximity <- factor(heatmap_fear_landclass_proximity$Proximity, # Convert proximity from "chr" to "factor"
+                                              levels = c("Very Near", "Near", "Far", "Very Far", "Unknown"))
+
+heatmap_fear_landclass_proximity <- heatmap_fear_landclass_proximity %>%
+  filter(!is.na(Proximity)) %>% # Remove rows that contains a "NA" value in proximity column
+  mutate_if(is.factor, droplevels)
+
+# unique(heatmap_fear_landclass_proximity$Proximity) # Check if NA value is removed
+
+ggplot(heatmap_fear_landclass_proximity, mapping = aes(x = Land_Class, y = Fear_Level, fill = Count)) +
+  geom_tile(color = "black") +
+  scale_fill_gradient(low = "lightblue", high = "red") +
+  labs(x = "Land Class", 
+       y = "Fear Level", 
+       title = "Proximity vs Fear Level and Land Class") +
+  facet_wrap(~ Proximity, scales = "free_x", ncol = 3) +  # Creates facets based on Proximity
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 5, hjust = 0.5),
+        plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+        strip.title = element_text(size = 12, face = "bold"),
+        panel.spacing = unit(1, "lines"))
+```
+
+
+Based on the heatmap above, we can conclude that for areas deemed as very near and near to landmine areas correspond to higher fear levels, as seen from medium to high categories. A2 and A4 landmine classes for example, emerge more frequently in the near proximity and elicit higher degree of fear level as compared to other proximities. Heatmap offers us a detailed look at how individual's anxiety levels vary according to their proximity to potential landmine danger and the type of landmine they might face. Higher incident counts highlighted in red suggests that more attention should be channeled, where demining and intervention activities may need to be prioritized in order to lower risk and anxiety. 
+
+
+#### 4.2.8 Bubble Plot on Incident Severity - Scatter Plot with point size to represent Amputation
+
+This scatter plot shows how the number of injured victims in explosive incidents correlates with fatalities and the level of amputations. 
+
+
+```{r cambodia_bubble_plot, echo = FALSE}
+# Bubble Plot on Incident Severity - Scatter Plot with point size to represent Amputation
+ggplot(new.mine.df, mapping = aes(x = INJURE, 
+                                  y = KILLED, 
+                                  size = AMPUTATION, 
+                                  color = as.factor(AMPUTATION))) +
+  geom_point(alpha = 0.5) +  # Slight transparency for overlapping points
+  geom_smooth(aes(x = INJURE, y = KILLED), method = "lm", se = FALSE, color = "black", linetype = "dashed", inherit.aes = FALSE) + 
+  scale_size_continuous(range = c(3, 8)) +  # Adjust bubble sizes
+  scale_color_manual(values = c("#4575b4", "#91bfdb", "#fc8d59", "#fee08b")) +  # Color based on number of amputations
+  labs(x = "Number of Injured Victims",
+       y = "Number of Fatalities",
+       size = "Amputation",
+       title = "Relationship Between Injuries, Deaths, and Amputations in Explosive Incidents",
+       color = "Amputation Level") +
+  guides(size = "none",
+         color = guide_legend(override.aes = list(size = 5))) +
+  theme_minimal() +
+  theme(legend.position = "right", # Move legend to the right for better visibility
+        plot.title = element_text(size = 10, face = "bold"),
+        axis.text = element_text(size = 10), 
+        axis.title = element_text(size = 12),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        panel.grid.major = element_line(size = 0.2, linetype = 'dashed'),
+        panel.grid.minor = element_blank(),
+        plot.margin = unit(c(1, 1, 1.5, 1), "cm"))
+```
+
+
+The dotted trend line shows a weak positive correlation between the number of fatalities and injuries, since the trendline is not steep. Majority of the points are clustered around the lower end of both axes, which implies that most of the incidents result in low injuries and death counts. There are also not much incidents which requires victim to undergo amputation, as there are not a lot of visible orange and yellow bubbles on the scatter plot.
+
+
+#### 4.2.9 Trend lines to view how Mine and ERW Incidents have evolved over time
+
+I purposely placed these two graphs next to each other and modified the y-axis to be the same for better comparison. The graphs displays the trends in mine-related and ERW-related casualties in Cambodia from 2005 to 2013. It shows the number of victims who were killed, got injured, or requires amputation, with all 3 degree of casualties each represented by a different color line. 
+
+
+```{r cambodia_mine_ERW_trendline, echo = FALSE, include=TRUE}
+# Using trend lines to view how Mine and ERW Incidents have evolved over time
+incident_trends <- as.data.frame(new.mine.df) %>%
+  group_by(Year, DEVICES) %>%
+  summarise(TOTAL_INJURE = sum(INJURE),
+            TOTAL_AMPUTATION = sum(AMPUTATION),
+            TOTAL_KILLED = sum(KILLED)) %>%
+  pivot_longer(cols = starts_with("TOTAL"),
+               names_to = "CATEGORY",
+               values_to = "Count")
+
+
+# Mine Incidents Trend
+mine_incidents_trend <- ggplot(subset(incident_trends, DEVICES == "Mine")) + 
+  geom_line(mapping = aes(x = Year, 
+                          y = Count, 
+                          group = CATEGORY,
+                          color = CATEGORY),
+            linewidth = 0.6) +
+  labs(x = "Year",
+       y = "Number of Victims",
+       title = "Trend of Mine-Related Casualties") +
+  scale_color_manual(values = c("TOTAL_INJURE" = "#56B4E9", "TOTAL_AMPUTATION" = "#009E73", "TOTAL_KILLED" = "#E69F00"),
+                     labels = c("TOTAL_INJURE" = "Total Injure", "TOTAL_AMPUTATION" = "Total Amputation", "TOTAL_KILLED" = "Total Killed"),
+                     name = "Casualty Suffered") +
+  theme_clean() +
+  theme(legend.position = "bottom", # Remove legend in this plot
+        legend.text = element_text(size = 4),
+        legend.title = element_text(size = 4, face = "bold"),
+        plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+        panel.spacing = unit(0, "lines")) +
+  coord_cartesian(ylim = c(0, 350)) # Sets consistent y -axis limits
+
+
+
+# ERW Incidents Trend
+ERW_incidents_trend <- ggplot(subset(incident_trends, DEVICES == "ERW")) + 
+  geom_line(mapping = aes(x = Year, 
+                          y = Count, 
+                          group = CATEGORY,
+                          color = CATEGORY),
+            linewidth = 0.6) +
+  labs(x = "Year",
+       y = "Number of Victims",
+       title = "Trend of ERW-Related Casualties") +
+  scale_color_manual(values = c("TOTAL_INJURE" = "#56B4E9", "TOTAL_AMPUTATION" = "#009E73", "TOTAL_KILLED" = "#E69F00"),
+                     labels = c("TOTAL_INJURE" = "Total Injure", "TOTAL_AMPUTATION" = "Total Amputation", "TOTAL_KILLED" = "Total Killed"),
+                     name = "Casualties Suffered") +
+  theme_clean() +
+  theme(legend.position = "bottom", # Keeping the legend in this plot
+        legend.text = element_text(size = 4),
+        legend.title = element_text(size = 4, face = "bold"),
+        plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+        panel.spacing = unit(0, "lines")) +
+  coord_cartesian(ylim = c(0, 350)) # Sets consistent y -axis limits
+
+
+# Plotting Mine and ERW Casualties Together using grid.arrange()
+grid.arrange(mine_incidents_trend, ERW_incidents_trend, nrow = 1)
+```
+
+
+Generally, the number of victims who suffered from casualties (amputations, injuries and deaths) have been showing a sharp decreasing trend over the years for both ERW and landmine incidents, which might suggest that the improvements are due to the enhanced effort to increase demining activities, better public awareness and higher emphasize on safety precautions. Nonetheless, there is still a low number of injuries, amputations and fatalities that continue to occur, indicating that these problems still exist, but on a much lesser scale. 
+
+
+#### 4.2.10 Bar Plots to Show Casualty Type by Landuse
+
+The distribution of casualties in Cambodia by kind of landuse is shown using the bar plot below, which is segregated by three different categories, namely: total amputation, total injure and total killed. We can conclude that the top three most dangerous landuse areas are located at village or urban/built-up area, followed by foraging area and subsequently rice field. These 3 landuse have resulted in the greatest casualties numbers. For this plot, I have omitted several values (mainly for casualty type: Total Amputation and Total Killed) because the number is very small and too insignificant to be included. 
+
+
+```{r cambodia_incidents_by_landuse, echo = FALSE}
+# Incidents sort by Landuse
+highest_landuse <- as.data.frame(new.mine.df) %>%
+  group_by(Landuse) %>%
+  summarise(TOTAL_VICTIM = sum(VICTIM),
+            TOTAL_INJURE = sum(INJURE),
+            TOTAL_AMPUTATION = sum(AMPUTATION),
+            TOTAL_KILLED = sum(KILLED)) %>%
+  arrange(TOTAL_VICTIM) %>%
+  select(-TOTAL_VICTIM)
+
+# print(highest_landuse)
+# class(highest_landuse)
+
+long_highest_landuse <- highest_landuse %>%
+  pivot_longer(cols = starts_with("TOTAL"),
+               names_to = "Casualty Type",
+               values_to = "Value")
+
+long_highest_landuse$Landuse <- fct_reorder(long_highest_landuse$Landuse, long_highest_landuse$Value, .fun = sum)
+
+ggplot(long_highest_landuse, 
+       mapping = aes(x = Landuse, y = Value, fill = `Casualty Type`)) +
+  geom_bar(stat = "identity", width = 0.8) +
+  geom_text(mapping = aes(label = ifelse(Value > 10, Value, "")),  # Only show labels for values greater than 10
+            position = position_stack(vjust = 0.5), size = 2, color = "black") +
+  coord_flip() +
+  scale_fill_manual(values = c("TOTAL_INJURE" = "#56B4E9", "TOTAL_AMPUTATION" = "#009E73", "TOTAL_KILLED" = "#E69F00"),
+                    labels = c("TOTAL_INJURE" = "Total Injure", "TOTAL_AMPUTATION" = "Total Amputation", "TOTAL_KILLED" = "Total Killed"),
+                    name = "Casualty Type") + 
+  labs(x = " ",
+       y = "Number of Casualties", 
+       title = "Casualty Type by Landuse in Cambodia") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+        legend.title = element_text(size = 8, face = "bold"),
+        axis.text.y = element_text(size = 10))
+```
+
+
+The regions of Cambodia with the highest death toll from landmine or ERW incidents are reflected in this plot. According to the bar plot, high-risk places include village or urban/built-up areas, foraging areas and rice fields. The most prevalent type of casualty is an injury, followed by amputation and death. The plot reiterates the existing dangers that mines and ERWs present to various landuse types in Cambodia, particularly in regions that are inhabited or used for agriculture purposes.
+
+
+#### 4.2.11 Box Plot of Victims by Device Type
+
+The box plot below shows the distribution of victims according to the types of explosive devices - mines and ERWs. The image shows that the median number of victims in both incidents is close to zero. The interquartile range is also very small, which implies that majority of the incidents has resulted in very few victims. 
+
+
+```{r cambodia_boxplot_victims, echo = FALSE}
+# Plotting a box plot for distribution of victim counts by device type
+victim_distribution <- as.data.frame(new.mine.df) %>%
+  select(DEVICES, VICTIM)
+
+ggplot(victim_distribution, mapping = aes(x = DEVICES, y = VICTIM)) +
+  geom_boxplot() + # a tool that helps create box plot.
+  stat_summary(fun = 'mean', geom = 'point', shape = 25, size = 3, fill = "orange") + # Highlighting the mean
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.1))) +
+  labs(x = "Devices",
+       y = "Number of Victims",
+       title = "Box Plot of Victims by Device Type") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.5),
+        axis.text = element_text(size = 12),
+        axis.title.y = element_text(margin = margin(r = 10)))
+```
+
+
+Even though the median and IQR in both devices suggests that it has resulted in very few victims, it is observed that there is an extreme outlier in ERW, with close to 40 victims in one particular incident, whereas landmine's highest number of victims got hurt in any incident is at most, 15. This suggest that ERW incidents tend to result in a wider spread in the number of victims being harmed. 
+
+
+
+## 5. Conclusion
+
+This research reveals that the aftermath from Cambodian civil war, despite having happened many years ago, still lingers and remain even till today. Analysis conducted on landmines and ERWs incidents in Cambodia reveals the disastrous effect that these incidents continue to have on the Cambodian communities. Even though the trend overtime indicates a decline in the total number of victims, landmines and ERWs continue to pose serious risks in several areas, such as Battambang, Banteay Meanchey and Pailin, where these provinces experience disproportionately high incident counts, which indicates the necessity for ongoing demining operations in these areas. 
+
+The breakdown of casualties by type of landuse emphasizes how vulnerable humans still are, especially in urban or rural settings. Communities that depend on agriculture for livelihood are especially vulnerable, as they are more susceptible to injuries, amputations and fatalities in places like villages, rice fields and foraging regions. Moreover, the box plot analysis of victims by device type further emphasizes that ERW accidents typically results in more severe implications in terms of the number of victims compared to landmine accidents, although both types of devices continue to have a negative impact on Cambodian communities. 
+
+This investigation serves as a potent reminder of the lasting effects of the Cambodian civil war. Even though the number of incidents have been on a decreasing trend overtime, demining operations and awareness campaigns must still continue because of the prevalent existence of these devices, especially in rural and high-risk areas. Targeted intervention might be necessary, especially in high-incidence provinces. 
+
+
+
+## 6. Appendix
+
+
+#### Issue 1 - Missing ERW_TYPE Values in mine.df
+
+There are a total of 61 rows of NA fields where DEVICES is "ERW" and ERW_TYPE is NA.
+
+
+``` {r issue_1, echo=TRUE, include=FALSE}
+# Checking for any NA values for mine.df Dataset
+is.na(mine.df) # to check if there is any missing values
+colSums(is.na(mine.df)) # count the no of missing values F=0; T=1
+
+blank_ERW_TYPE <- mine.df %>%
+  filter(DEVICES == "ERW") %>% # Filter rows where DEVICES is "ERW"
+  filter(is.na(ERW_TYPE)) # Further filter to extract rows where ERW_TYPE is NA
+```
+
+
+I will replace NA fields with "Unknown".
+
+
+``` {r solution_1, echo=TRUE, include=TRUE}
+updated.mine.df <- mine.df %>%
+  mutate(ERW_TYPE = if_else(DEVICES == "ERW" & is.na(ERW_TYPE), "Unknown", ERW_TYPE))
+```
+
+
+#### Issue 2 - Geometry variable not in latitude-longitude coordinate in mine.df
+
+The geometry variable given in mine.dataset is not in the latitude-longitude coordinate.
+
+
+``` {r issue_2, echo=FALSE}
+# print(updated.mine.df)
+```
+
+
+I will convert it into latitude-longitude coordinate using st_transform().
+
+
+``` {r solution_2, echo=TRUE}
+updated.mine.df$geometry <- st_transform(updated.mine.df$geometry, crs = 4326)
+```
+
+
+#### Issue 3 - Convert data type for 'VilCode' in fear.df from "chr" to "num"
+
+The data type for 'VilCode' in fear.df is originally "chr".
+
+
+``` {r issue_3, echo=FALSE, include=FALSE}
+str(fear.df) # Shows the number of observations(rows) and variables (columns) in fear dataframe
+```
+
+
+I will convert 'VilCode' data type in fear.df from "chr" to "num".
+I will have to put options(scipen = 999) to set options to display numbers without scientific notation. 
+
+
+``` {r solution_3, echo=TRUE}
+options(scipen = 999) # Set options to display numbers without scientific notation
+fear.df$VilCode <- as.numeric(fear.df$VilCode) # Converting fear.df dataset VilCode from "chr" to "num"
+str(fear.df)
+```
+
+
+#### Issue 4 - Missing Fear_Level Values in fear.df
+
+The column, 'Fear_Level' contains certain rows with "(blank)" values, which will give rise to incorrect interpretations if I were to drop these rows.
+
+
+``` {r issue_4, echo=TRUE}
+fear.df$Fear_Level %>% unique()
+```
+
+
+I will replace the "(blank)" fields with the word, "Unknown".
+
+
+``` {r solution_4, echo=TRUE}
+updated.fear.df <- fear.df %>%
+  mutate(Fear_Level = if_else(Fear_Level == "(blank)", "Unknown", Fear_Level))
+```
+
+
+#### Issue 5 - Geometry variable not in latitude-longitude coordinate in fear.df
+
+Similar to Issue 2 identified earlier, the geometry variable given in fear.dataset is not in the latitude-longitude coordinate.
+
+
+``` {r issue_5, echo=FALSE}
+# print(updated.fear.df)
+```
+
+
+I will convert it into latitude-longitude coordinate using st_transform().
+
+
+``` {r solution_5, echo=TRUE}
+updated.fear.df$geometry <- st_transform(updated.fear.df$geometry, crs = 4326)
+```
+
+
+#### Issue 6 - Province names differ across both datasets
+
+The names of the provinces in Cambodia differs across both mine and fear datasets. Fear dataset are all capitalized while mine dataset consists of first letter capitalized and the rest small letters. It is also observed that the province names either have incorrect spellings or requires fixing of spaces. 
+
+
+``` {r issue_6, echo=FALSE, include=FALSE}
+new.mine.df$Province %>% unique() # See what are the original province name in my mine and fear datasets
+new.fear.df$Province %>% unique()
+```
+
+I will convert the names into lowercase letters, remove any leading/trailing spaces between characters. I will also standardize and fix the spelling or spacing issues for both datasets.
+
+
+``` {r solution_6, echo=TRUE}
+new.mine.df$Province <- tolower(trimws(new.mine.df$Province)) # Convert everything into lowercase and remove any leading/trailing spaces between characters
+new.fear.df$Province <- tolower(trimws(new.fear.df$Province))
+
+# Creating named vector with correct spellings for Cambodia's province names
+province_names_corrections <- c(
+  "mondol kiri" = "mondulkiri",               # Correct to "mondulkiri"
+  "mondul kiri" = "mondulkiri",               # Correct to "mondulkiri"
+  "kampong cham" = "kampong cham",            # Already correct
+  "banteay mean chey" = "banteay meanchey",   # Fix spacing
+  "otdar mean chey" = "oddar meanchey",       # Correct to "oddar meanchey"
+  "siem reap" = "siem reap",                  # Already correct
+  "siemreap" = "siem reap",                  # Fix to "siem reap"
+  "preah vihear" = "preah vihear",            # Already correct
+  "pursat" = "pursat",                       # Already correct
+  "battambang" = "battambang",               # Already correct
+  "krong pailin" = "pailin",                 # Correct to "pailin"
+  "kaoh kong" = "koh kong",                  # Correct to "koh kong"
+  "kampot" = "kampot",                       # Already correct
+  "kampong speu" = "kampong speu",           # Already correct
+  "kandal" = "kandal",                       # Already correct
+  "kracheh" = "kratie",                      # Correct to "kratie"
+  "kampong thom" = "kampong thom",           # Already correct
+  "kampong chhnang" = "kampong chhnang",     # Already correct
+  "stueng traeng" = "stung treng",           # Correct to "stung treng"
+  "svay rieng" = "svay rieng",               # Already correct
+  "takaev" = "takeo",                        # Correct to "takeo"
+  "prey veaeng" = "prey veng",               # Correct to "prey veng"
+  "phnom penh" = "phnom penh",               # Already correct
+  "rotanak kiri" = "ratanakiri",             # Correct to "ratanakiri"
+  "ratanak kiri" = "ratanakiri",             # Correct to "ratanakiri"
+  "krong preah sihanouk" = "preah sihanouk", # Correct to "preah sihanouk"
+  "sihanoukville" = "preah sihanouk"         # Correct to "preah sihanouk"
+)
+```
+
+
+#### Feature Engineering 1
+
+The original mine dataset provides me with the incident dates of the incident, in this format, YYYY-MM-DD. I will extract out only the 'Year' information, put it under a new column, so that I can plot my spatial plot distribution of incidents overtime.
+
+
+``` {r feature_engineering_1, echo = TRUE, eval = FALSE}
+# Spatial Plot Distribution of Incidents Overtime from cam.map
+new.mine.df$Incident_D <- as.Date(new.mine.df$Incident_D) # Change data type for Incident_D into date type
+new.mine.df$Year <- format(new.mine.df$Incident_D, "%Y") # Extract Year as character
+```
+
+
+#### Feature Engineering 2
+
+Earlier on I have already converted my geometry points into the latitude-longitude coordinate system. I will then extract these points and create new separate columns, one for "longitude" and the other "latitude". This is because when I am performing my Geospatial Analysis, Google Maps require latitude and longitude as independent inputs to plot points on the map. Compatibility with these tools, which assume separate handling of each dimension, is ensured by splitting coordinates. 
+
+
+``` {r feature_engineering_2, echo = TRUE, eval = FALSE}
+# Converting geometry variable into the lat-long coordinate system using st_transform
+updated.fear.df$geometry <- st_transform(updated.fear.df$geometry, crs = 4326)
+
+print(class(updated.fear.df$geometry)) # To check if my geometry column is set up properly to represent spatial point data
+
+coordinates.fear.df <- st_coordinates(updated.fear.df$geometry) # Extract coordinates
+coordinates.fear.df <- as.data.frame(coordinates.fear.df) # Convert coordinates.fear.df into dataframe
+colnames(coordinates.fear.df) <- c("Longitude", "Latitude") # Rename the columns of the extracted data
+
+new.fear.df <- cbind(updated.fear.df, coordinates.fear.df) # Merge coordinates back into original fear.df dataset
+```
+
+
+
+## References
+World Bank. (2024). Cambodia Overview. Retrieved from https://www.worldbank.org/en/country/cambodia/overview.
+
+Open Development Cambodia. (n.d.). Landmines, UXO and Demining. Retrieved from https://opendevelopmentcambodia.net/topics/landmines-uxo-and-demining/#ref-73803-6
+
+Open Development Cambodia. (n.d.). Mine/ERW Casualties 2005–2013. Retrieved from https://data.opendevelopmentcambodia.net/dataset/mineerw-casualties-2005--2013
+
+Open Development Cambodia. (n.d.). Explosive Remnants of War (ERW). Retrieved from https://data.opendevelopmentcambodia.net/dataset/erw
+
+Open Development Cambodia. (n.d.). Administrative Boundaries of Cambodia (2014). Retrieved from https://data.opendevelopmentcambodia.net/dataset/administrative-boundaries-of-cambodia-2014
+
+
+
+## Appendix
