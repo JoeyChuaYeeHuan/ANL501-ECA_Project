@@ -6,7 +6,8 @@
     <title>Data Visualizations - Joey Chua Yee Huan</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -14,6 +15,23 @@
             padding: 20px;
             background-color: #f4f4f4;
             color: #333;
+        }
+        /* Navigation Bar */
+        nav {
+            background-color: #007bff;
+            padding: 15px 0;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 15px;
+            padding: 10px;
+        }
+        nav a:hover {
+            background-color: #0056b3;
+            border-radius: 5px;
         }
         h1 {
             text-align: center;
@@ -35,63 +53,104 @@
             display: block;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
         }
         .caption {
             font-size: 16px;
             color: #555;
             margin-bottom: 20px;
         }
+        /* Lightbox Effect */
+        #lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        #lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
+
+<!-- Navigation Bar -->
+<nav>
+    <a href="index.html">Home</a>
+    <a href="visualizations.html">Visualizations</a>
+    <a href="#contact">Contact</a>
+</nav>
 
 <h1>📊 Data Visualizations</h1>
 
 <div class="container">
     <h2>1️⃣ Cambodia Map Overview</h2>
-    <img src="Cambodia Map Overview.png" alt="Cambodia Map Overview">
+    <img src="Cambodia Map Overview.png" alt="Cambodia Map Overview" onclick="openLightbox(this.src)">
     <p class="caption">This visualization shows an overview of Cambodia map plotted using its geographic coordinates, fetched from get_googlemap.</p>
 
     <h2>2️⃣ Spatial Distribution of Incidents Overtime</h2>
-    <img src="Spatial Distribution of Incidents Overtime.png" alt="Spatial Distribution of Incidents Overtime">
+    <img src="Spatial Distribution of Incidents Overtime.png" alt="Spatial Distribution of Incidents Overtime" onclick="openLightbox(this.src)">
     <p class="caption">This map shows the spatial distribution of incidences associated with explosive ordnance - mines and ERWs spanning across several years throughout Cambodia.</p>
-    
+
     <h2>3️⃣ Provinces of Cambodia with Longitude and Latitude</h2>
-    <img src="Provinces of Cambodia with Longitude and Latitude.png" alt="Provinces of Cambodia with Longitude and Latitude">
+    <img src="Provinces of Cambodia with Longitude and Latitude.png" alt="Provinces of Cambodia with Longitude and Latitude" onclick="openLightbox(this.src)">
     <p class="caption">The provinces are each represented using a blue dot, indicating its unique location based on latitude and longitude.</p>
 
     <h2>4️⃣ Landmine Incidents in Cambodia</h2>
-    <img src="Landmine Incidents in Cambodia.png" alt="Landmine Incidents in Cambodia">
+    <img src="Landmine Incidents in Cambodia.png" alt="Landmine Incidents in Cambodia" onclick="openLightbox(this.src)">
     <p class="caption">Features the type of device that caused the explosion in Cambodia.</p>
 
     <h2>5️⃣ Cambodia Incident Count by Province</h2>
-    <img src="Cambodia Incident Count by Province.png" alt="Cambodia Incident Count by Province">
-    <p class="caption">This bar plot illustrates the total number of incident count encountered by different provinces of Cambodia, arranged from highest to lowest for better visibility.</p>
+    <img src="Cambodia Incident Count by Province.png" alt="Cambodia Incident Count by Province" onclick="openLightbox(this.src)">
+    <p class="caption">This bar plot illustrates the total number of incident count encountered by different provinces of Cambodia, arranged from highest to lowest.</p>
 
     <h2>6️⃣ Distribution of Different Landmine Class</h2>
-    <img src="Distribution of Different Landmine Class.png" alt="Distribution of Different Landmine Class">
+    <img src="Distribution of Different Landmine Class.png" alt="Distribution of Different Landmine Class" onclick="openLightbox(this.src)">
     <p class="caption">This bar plot shows the frequency of different landmine classes found in Cambodia.</p>
 
     <h2>7️⃣ Proximity vs Fear Level and Land Class</h2>
-    <img src="Proximity vs Fear Level and Land Class.png" alt="Proximity vs Fear Level and Land Class">
-    <p class="caption">A heatmap illustrating the correlation between proximity to danger, fear level and various landmine classes.</p>
+    <img src="Proximity vs Fear Level and Land Class.png" alt="Proximity vs Fear Level and Land Class" onclick="openLightbox(this.src)">
+    <p class="caption">A heatmap illustrating the correlation between proximity to danger, fear level, and various landmine classes.</p>
 
     <h2>8️⃣ Relationship Between Injuries, Deaths, and Amputations in Explosive Incidents</h2>
-    <img src="Relationship Between Injuries, Deaths, and Amputations in Explosive Incidents.png" alt="Relationship Between Injuries, Deaths, and Amputations in Explosive Incidents">
+    <img src="Relationship Between Injuries, Deaths, and Amputations in Explosive Incidents.png" alt="Relationship Between Injuries, Deaths, and Amputations in Explosive Incidents" onclick="openLightbox(this.src)">
     <p class="caption">This scatter plot shows how the number of injured victims in explosive incidents correlates with fatalities and the level of amputations.</p>
 
     <h2>9️⃣ Mine and ERW Trendline Together</h2>
-    <img src="Mine and ERW Trendline Together.png" alt="Mine and ERW Trendline Together">
+    <img src="Mine and ERW Trendline Together.png" alt="Mine and ERW Trendline Together" onclick="openLightbox(this.src)">
     <p class="caption">Trend lines showing how Mine and ERW incidents have evolved over time from 2005 to 2013.</p>
 
-    <h2>1️⃣0️⃣ Casualty Type by Landuse in Cambodia</h2>
-    <img src="Casualty Type by Landuse in Cambodia.png" alt="Casualty Type by Landuse in Cambodia">
+    <h2>🔟 Casualty Type by Landuse in Cambodia</h2>
+    <img src="Casualty Type by Landuse in Cambodia.png" alt="Casualty Type by Landuse in Cambodia" onclick="openLightbox(this.src)">
     <p class="caption">Bar plot showing the distribution of casualties in Cambodia by kind of landuse, segregated by different categories.</p>
 
     <h2>1️⃣1️⃣ Box Plot of Victims by Device Type</h2>
-    <img src="Box Plot of Victims by Device Type.png" alt="Box Plot of Victims by Device Type">
+    <img src="Box Plot of Victims by Device Type.png" alt="Box Plot of Victims by Device Type" onclick="openLightbox(this.src)">
     <p class="caption">Box plot showing the distribution of victims according to the types of explosive devices.</p>
 </div>
+
+<!-- Lightbox for Enlarging Images -->
+<div id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img">
+</div>
+
+<!-- JavaScript for Lightbox Effect -->
+<script>
+    function openLightbox(src) {
+        document.getElementById("lightbox-img").src = src;
+        document.getElementById("lightbox").style.display = "flex";
+    }
+    function closeLightbox() {
+        document.getElementById("lightbox").style.display = "none";
+    }
+</script>
 
 </body>
 </html>
