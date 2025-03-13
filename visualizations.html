@@ -4,9 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Visualizations - Joey Chua Yee Huan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+        img {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .caption {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>📊 Data Visualizations</h1>
-    <p>Here are the visualizations for my project.</p>
+
+<h1>📊 Data Visualizations</h1>
+
+<div class="container">
+    <h2>1️⃣ Cambodia Map Overview</h2>
+    <img src="Cambodia Map Overview.png" alt="Cambodia Map Overview">
+    <p class="caption">This visualization shows an overview of Cambodia map plotted using its geographic coordinates, fetched from get_googlemap.</p>
+
+    <h2>2️⃣ Spatial Distribution of Incidents Overtime</h2>
+    <img src="Spatial Distribution of Incidents Overtime.png" alt="Spatial Distribution of Incidents Overtime">
+    <p class="caption">This map shows the spatial distribution of incidences associated with explosive ordnance - mines and ERWs spanning across several years throughout Cambodia.</p>
+    
+    <h2>3️⃣ Provinces of Cambodia with Longitude and Latitude</h2>
+    <img src="Provinces of Cambodia with Longitude and Latitude.png" alt="Provinces of Cambodia with Longitude and Latitude">
+    <p class="caption">The provinces are each represented using a blue dot, indicating its unique location based on latitude and longitude.</p>
+
+    <h2>4️⃣ Landmine Incidents in Cambodia</h2>
+    <img src="Landmine Incidents in Cambodia.png" alt="Landmine Incidents in Cambodia">
+    <p class="caption">Features the type of device that caused the explosion in Cambodia.</p>
+
+    <h2>5️⃣ Cambodia Incident Count by Province</h2>
+    <img src="Cambodia Incident Count by Province.png" alt="Cambodia Incident Count by Province">
+    <p class="caption">This bar plot illustrates the total number of incident count encountered by different provinces of Cambodia, arranged from highest to lowest for better visibility.</p>
+
+    <h2>6️⃣ Distribution of Different Landmine Class</h2>
+    <img src="Distribution of Different Landmine Class.png" alt="Distribution of Different Landmine Class">
+    <p class="caption">This bar plot shows the frequency of different landmine classes found in Cambodia.</p>
+
+    <h2>7️⃣ Proximity vs Fear Level and Land Class</h2>
+    <img src="Proximity vs Fear Level and Land Class.png" alt="Proximity vs Fear Level and Land Class">
+    <p class="caption">A heatmap illustrating the correlation between proximity to danger, fear level and various landmine classes.</p>
+
+    <h2>8️⃣ Relationship Between Injuries, Deaths, and Amputations in Explosive Incidents</h2>
+    <img src="Relationship Between Injuries, Deaths, and Amputations in Explosive Incidents.png" alt="Relationship Between Injuries, Deaths, and Amputations in Explosive Incidents">
+    <p class="caption">This scatter plot shows how the number of injured victims in explosive incidents correlates with fatalities and the level of amputations.</p>
+
+    <h2>9️⃣ Mine and ERW Trendline Together</h2>
+    <img src="Mine and ERW Trendline Together.png" alt="Mine and ERW Trendline Together">
+    <p class="caption">Trend lines showing how Mine and ERW incidents have evolved over time from 2005 to 2013.</p>
+
+    <h2>1️⃣0️⃣ Casualty Type by Landuse in Cambodia</h2>
+    <img src="Casualty Type by Landuse in Cambodia.png" alt="Casualty Type by Landuse in Cambodia">
+    <p class="caption">Bar plot showing the distribution of casualties in Cambodia by kind of landuse, segregated by different categories.</p>
+
+    <h2>1️⃣1️⃣ Box Plot of Victims by Device Type</h2>
+    <img src="Box Plot of Victims by Device Type.png" alt="Box Plot of Victims by Device Type">
+    <p class="caption">Box plot showing the distribution of victims according to the types of explosive devices.</p>
+</div>
+
 </body>
 </html>
+
