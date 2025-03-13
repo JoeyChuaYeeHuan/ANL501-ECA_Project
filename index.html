@@ -12,6 +12,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
     <style>
         body {
@@ -21,13 +22,39 @@
             background-color: #f4f4f4;
             color: #333;
         }
-        header {
+        /* Navigation Bar */
+        nav {
             background-color: #007bff;
+            padding: 15px 0;
+            text-align: center;
+        }
+        nav a {
             color: white;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 15px;
+            padding: 10px;
+        }
+        nav a:hover {
+            background-color: #0056b3;
+            border-radius: 5px;
+        }
+        header {
             text-align: center;
             padding: 20px;
             font-size: 26px;
             font-weight: 600;
+            background-color: #007bff;
+            color: white;
+        }
+        .profile-img {
+            display: block;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 20px auto;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .container {
             width: 80%;
@@ -37,19 +64,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
         }
-        .profile-img {
-            display: block;
-            width: 30px;  /* Adjust size */
-            height: 30px; /* Adjust size */
-            border-radius: 50%; /* Makes it a circle */
-            margin: 10px auto; /* Centers the image */
-            border: 4px solid #007bff; /* Optional border */
-        }
         h2 {
             color: #007bff;
-        }
-        .project-section {
-            margin-top: 20px;
         }
         .button {
             display: inline-block;
@@ -75,6 +91,11 @@
             color: #007bff;
             font-weight: 500;
             margin: 0 10px;
+            font-size: 18px;
+        }
+        .contact a i {
+            font-size: 22px;
+            margin-right: 5px;
         }
         footer {
             text-align: center;
@@ -88,16 +109,25 @@
 </head>
 <body>
 
+<!-- Navigation Bar -->
+<nav>
+    <a href="#about">About Me</a>
+    <a href="#project">Projects</a>
+    <a href="#contact">Contact</a>
+</nav>
+
 <header>
-    <img src="233109481_848637942682240_7296667215270835955_n.jpg" alt="Joey Chua Yee Huan" class="233109481_848637942682240_7296667215270835955_n-img">
+    <img src="profile.jpg" alt="Joey Chua Yee Huan" class="profile-img">
     <h1>📊 Data Analytics Portfolio - Joey Chua Yee Huan</h1>
 </header>
 
-<div class="container">
+<div class="container" id="about">
     <h2>About Me</h2>
     <p>Welcome to my portfolio! I specialize in data analytics, visualization, and storytelling, with a passion for using data to drive insights and impact.</p>
-    <p>🏆 Final Grade: <span class="highlight">A</span> in ANL501 - Data Visualization & Storytelling</p>
+    <p>🏆 <strong>Final Grade: <span style="color: #28a745;">A</span></strong> in ANL501 - Data Visualization & Storytelling</p>
+</div>
 
+<div class="container" id="project">
     <h2>Featured Project: ANL501 - Data Visualization & Storytelling</h2>
     
     <div class="project-section">
@@ -118,25 +148,24 @@
         <a href="visualizations.html" class="button" target="_blank">📊 View Data Visualizations</a>
         
         <h4>📢 Key Takeaways:</h4>
-        <ul>
-            <li>Developed strong storytelling skills through data visualization, ensuring insights were clear, impactful, and accessible</li>
-            <li>Gained hands-on experience in spatial data analysis and automation of reports</li>
-            <li>Strengthened my ability to translate raw data into meaningful insights to support policy-making</li>
-        </ul>
         <p>✅ Final Grade: <strong>A</strong> | 🎯 Skills: Data Storytelling, Geospatial Analysis, R Programming</p>
     </div>
 </div>
 
 <!-- Contact Section -->
-<div class="contact">
+<div class="contact" id="contact">
     <h3>📬 Connect With Me</h3>
     <p>Let's connect and collaborate!</p>
-    <a href="https://linkedin.com/in/joey-chua-9504b7172/" target="_blank">LinkedIn</a> |
-    <a href="https://joeychuayeehuan.github.io/ANL501-ECA_Project/" target="_blank">GitHub</a>
+    <a href="https://linkedin.com/in/joey-chua-9504b7172/" target="_blank">
+        <i class="fab fa-linkedin"></i> LinkedIn
+    </a> |
+    <a href="https://github.com/JoeyChuaYeeHuan" target="_blank">
+        <i class="fab fa-github"></i> GitHub
+    </a>
 </div>
 
 <footer>
-    🚀 Portfolio by Joey Chua | Data Enthusiast & Visual Storyteller
+    © 2025 Joey Chua | Built with ❤️ on GitHub Pages
 </footer>
 
 </body>
